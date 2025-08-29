@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Peer Study Exchange</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>🎓 Peer Study Exchange</h1>
+
+  <!--auth section...login or signup toggling-->
+  <div id="auth-container">
+    <form id="login-form">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email" required />
+      <input type="password" id="login-password" placeholder="Password" required />
+      <button type="button" onclick="handleLogin()" class="button-blue">Login</button>
+      <p>Don't have an account? <span class="link" onclick="toggleForms()">Sign up</span></p>
+    </form>
+    <form id="signup-form" style="display: none;">
+      <h2>Sign Up</h2>
+      <input type="text" id="signup-name" placeholder="Your Name" required />
+      <input type="email" id="signup-email" placeholder="Email" required />
+      <input type="password" id="signup-password" placeholder="Password" required />
+      <button type="button" onclick="handleSignup()" class="button-blue">Sign Up</button>
+      <p>Already have an account? <span class="link" onclick="toggleForms()">Login</span></p>
+    </form>
+  </div>
+
+  <!--skills that a user can teach(or a set of it...) and the skills he needs help in-->
+  <div id="skill-section" style="display: none;">
+    <form id="skill-form">
+      <input type="text" id="teach" placeholder="Skill you can teach" required />
+      <input type="text" id="learn" placeholder="Skill you want to learn" required />
+      <button type="submit" class="button-blue">Submit Skills</button>
+    </form>
+  </div>
+
+  <!--top menu action buttons-->
+  <div id="action-buttons" style="display: none;">
+    <button id="logout" class="button-red">Logout</button>
+    <button onclick="fetchMatches()" class="button-blue">Find Matches with Gemini</button>
+    <button onclick="openInbox()" class="button-blue inbox-btn">📥 Inbox <span id="new-msg-indicator"></span></button>
+    <button onclick="showCollabDashboard()" class="button-green">📅 My Collaborations</button>
+  </div>
+
+  <!--all users-->
+  <div id="users-list" style="display: none;">
+    <h2>Users Dashboard</h2>
+    <ul id="users"></ul>
+  </div>
+
+  <!--my collaborations-->
+<div id="collab-dashboard" style="display: none;">
+  <h2 class = "section-title">📅 My Collaborations</h2>
+  <ul id="accepted-collab-list"></ul>
+</div>
+
+
+  <!--successful collaborations-->
+  <div id="collaborations-section" style="display: none;">
+    <h2 class = "section-title">🎉 Successful Collaborations</h2>
+    <ul id="collaboration-list"></ul>
+  </div>
+
+  <!--toast container for pop up messages-->
+  <div id="toast-container"></div>
+
+  <!--match modal for showing gemini output matches-->
+  <div id="match-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal">&times;</span>
+      <h3>🎯 Gemini Match Suggestions</h3>
+      <div id="match-results"></div>
+    </div>
+  </div>
+
+  <!--chat modal for all personal chats-->
+  <div id="chat-modal" class="modal">
+    <div class="modal-content chat-box">
+      <span id="close-chat-modal">&times;</span>
+      <h3 id="chat-with">Chat</h3>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Type a message..." />
+        <button onclick="sendMessage()" class="button-blue">Send</button>
+      </div>
+    </div>
+  </div>
+
+ <!--inbox modal for inbox of all chatting accounts-->
+<div id="inbox-modal" class="modal">
+  <div class="modal-content inbox-content">
+    <span id="close-inbox-modal">&times;</span>
+    <h3>📥 Inbox</h3>
+    <ul id="inbox-list"></ul>
+
+    <hr />
+    <!--collaborations section-->
+<div id="collab-requests-section">
+  <h3>🤝 Collaboration Requests</h3>
+  <ul id="collab-requests-list"></ul>
+</div>
+
+  </div>
+</div>
+
+
+<!--collaboration requests-->
+<div id="collab-request-modal" class="modal">
+  <div class="modal-content">
+    <span id="close-collab-request-modal">&times;</span>
+    <h3>🤝 Request Collaboration</h3>
+    <form id="collab-request-form">
+      <label for="collab-skill">Skill to collaborate on</label>
+      <input type="text" id="collab-skill" required />
+
+      <label for="collab-date">Preferred date</label>
+      <input type="date" id="collab-date" required />
+
+      <label for="collab-message">Joining link (required)</label>
+      <input type="url" id="collab-message" placeholder="https://meet.google.com/..." required />
+
+      <button type="submit" class="button-blue">Send Request</button>
+    </form>
+  </div>
+</div>
+
+
+<!--feedback modal for feedback of sessions-->
+<div id="feedback-modal" class="modal">
+  <div class="modal-content feedback-modal-content">
+    <span id="close-feedback-modal">&times;</span>
+    <h3>🌟 Leave Feedback</h3>
+    <form id="feedback-form">
+      <label for="feedback-rating">Rating</label>
+      <select id="feedback-rating" required>
+        <option value="">Select</option>
+        <option value="5">🌟🌟🌟🌟🌟</option>
+        <option value="4">🌟🌟🌟🌟</option>
+        <option value="3">🌟🌟🌟</option>
+        <option value="2">🌟🌟</option>
+        <option value="1">🌟</option>
+      </select>
+
+      <label for="feedback-comment">Comment</label>
+      <textarea id="feedback-comment" rows="3" required></textarea>
+
+      <label for="feedback-github">Optional GitHub/project link</label>
+      <input type="url" id="feedback-github" placeholder="https://github.com/your-project" />
+
+      <button type="submit" class="button-blue">Submit Feedback</button>
+    </form>
+  </div>
+</div>
+
+  <!--Firebase SDKs-->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
