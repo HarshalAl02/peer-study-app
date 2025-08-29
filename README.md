@@ -6,6 +6,11 @@
 
 ---
 
+🔗 **Live Demo:** [peer-study-app](https://peer-study-app.onrender.com/)  
+📁 **Repo:** [peer-dtudy-app](https://github.com/HarshalAl02/peer-study-app)
+
+---
+
 ## 🚀 Features
 
 - 🔍 **Skill Discovery** – Add and browse skills offered and required by other students.
